@@ -42,6 +42,7 @@ namespace KronosTesting
             this.lbllName = new System.Windows.Forms.Label();
             this.tblName = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.cbAgents = new System.Windows.Forms.ComboBox();
             this.tbTags = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
             this.lblRecordCount = new System.Windows.Forms.Label();
@@ -159,16 +160,25 @@ namespace KronosTesting
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel1.Controls.Add(this.cbAgents);
             this.panel1.Controls.Add(this.tbTags);
             this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.lblRecordCount);
             this.panel1.Controls.Add(this.button1);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(5, 757);
+            this.panel1.Location = new System.Drawing.Point(5, 750);
             this.panel1.Name = "panel1";
             this.panel1.Padding = new System.Windows.Forms.Padding(5);
-            this.panel1.Size = new System.Drawing.Size(1269, 30);
+            this.panel1.Size = new System.Drawing.Size(1269, 37);
             this.panel1.TabIndex = 12;
+            // 
+            // cbAgents
+            // 
+            this.cbAgents.FormattingEnabled = true;
+            this.cbAgents.Location = new System.Drawing.Point(769, 5);
+            this.cbAgents.Name = "cbAgents";
+            this.cbAgents.Size = new System.Drawing.Size(223, 21);
+            this.cbAgents.TabIndex = 17;
             // 
             // tbTags
             // 
@@ -224,7 +234,7 @@ namespace KronosTesting
             this.dgData.ReadOnly = true;
             this.dgData.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.dgData.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dgData.Size = new System.Drawing.Size(1269, 710);
+            this.dgData.Size = new System.Drawing.Size(1269, 703);
             this.dgData.TabIndex = 1;
             this.dgData.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgData_CellContentClick);
             // 
@@ -285,7 +295,7 @@ namespace KronosTesting
             this.panel4.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel4.Location = new System.Drawing.Point(5, 47);
             this.panel4.Name = "panel4";
-            this.panel4.Size = new System.Drawing.Size(1269, 710);
+            this.panel4.Size = new System.Drawing.Size(1269, 703);
             this.panel4.TabIndex = 14;
             // 
             // Form1
@@ -297,7 +307,7 @@ namespace KronosTesting
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form1";
             this.Padding = new System.Windows.Forms.Padding(10);
-            this.Text = "Open Enrollment Client Finder Thingy Special Edition 5.6.7 (unregistered)";
+            this.Text = "Open Enrollment Client Finder Thingy ";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgData)).EndInit();
@@ -333,6 +343,7 @@ namespace KronosTesting
         private System.Windows.Forms.TextBox tbLast4;
         private System.Windows.Forms.Label lblLast4;
         private System.Windows.Forms.TextBox tbTags;
+        private System.Windows.Forms.ComboBox cbAgents;
     }
 }
 

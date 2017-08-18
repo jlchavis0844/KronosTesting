@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Net.Http;
@@ -24,6 +25,8 @@ namespace KronosTesting
         private static readonly HttpClient client = new HttpClient();
         
         private static string userName = GetUserName();
+        private static List<Tuple<string, int>> agents = null;
+        private static List<string> agentNames = null;
 
         /// <summary>
         /// Constuctor
@@ -114,6 +117,14 @@ namespace KronosTesting
             cmd.Dispose();
             cbSchools.SelectedIndex = 0;
             conn.Close();
+
+            GetAgentNames();
+            cbAgents.Items.Insert(0, "Change Default Agent");
+            foreach(string name in agentNames) {
+                cbAgents.Items.Add(name);
+            }
+            cbAgents.SelectedIndex = 0;
+
             ((DataTable)dgData.DataSource).DefaultView.RowFilter = null;
             
             lblRecordCount.Text = "Record Count: " + ((DataTable)dgData.DataSource).DefaultView.Count;
@@ -243,6 +254,12 @@ namespace KronosTesting
         public string BuildJson(DataGridViewRow row) {
             string[] arr = new string[1];
             arr[0] = tbTags.Text;
+            int idNum = 0;
+            if(cbAgents.SelectedItem == null || cbAgents.SelectedItem.ToString() == "Change Default Agent"){
+                idNum = Convert.ToInt32(GetUserID());
+            } else {
+                idNum = GetAgentID();
+            }
 
             JObject custSub = new JObject(
                 new JProperty("Worksite Email", row.Cells[4].Value),
@@ -254,7 +271,7 @@ namespace KronosTesting
                 new JProperty("Annual Salary", row.Cells[12].Value)
                 );
             JObject data = new JObject(
-                        new JProperty("owner_id", Convert.ToInt32(GetUserID())),
+                        new JProperty("owner_id", idNum),
                         new JProperty("first_name", row.Cells[1].Value),
                         new JProperty("last_name", row.Cells[2].Value),
                         new JProperty("email", row.Cells[3].Value),
@@ -313,11 +330,57 @@ namespace KronosTesting
                 cell.Value = dgData.CurrentCell.Value.ToString();
                 dgData.Rows[e.RowIndex].Cells[13] = cell;
                 System.Diagnostics.Process.Start(dgData.CurrentCell.Value.ToString());
+            } else if (dgData.CurrentCell.Value != null  && dgData.CurrentCell.Value.ToString() != "") {
+                Clipboard.SetText(dgData.CurrentCell.Value.ToString());
             }
         }
 
         private void dgData_CellClick(object sender, DataGridViewCellEventArgs e) {
 
+        }
+
+        public int GetAgentID() {
+            if(agentNames == null || agentNames.Count == 0) {
+                GetAgentNames();
+            }
+
+            foreach(Tuple<string, int> tuple in agents) {
+                if(tuple.Item1 == cbAgents.SelectedItem.ToString()) {
+                    return tuple.Item2;
+                }
+            }
+            return 0;
+        }
+
+        private static void GetAgents() {
+            string name = "";
+            string idnum = "";
+            agents = new List<Tuple<string, int>>();
+            SqlConnection tconn = new SqlConnection("Data Source=RALIMSQL1;Initial Catalog=Kronos;Integrated Security=SSPI;");
+            SqlCommand tcmd = new SqlCommand("SELECT * FROM [Kronos].[dbo].[userIDs]", tconn);
+            tconn.Open();
+            tcmd.CommandType = System.Data.CommandType.Text;
+            SqlDataReader reader = tcmd.ExecuteReader();
+
+            while (reader.Read()) {
+                name = reader.GetString(1);
+                idnum = reader.GetString(0);
+                agents.Add(Tuple.Create(name, Convert.ToInt32(idnum)));
+            }
+
+            tconn.Close();
+            tcmd.Dispose();
+        }
+
+        private void GetAgentNames() {
+            if (agents == null || agents.Count == 0) {
+                GetAgents();
+            }
+
+            agentNames = new List<string>();
+            foreach (Tuple<string, int> tuple in agents) {
+                agentNames.Add(tuple.Item1);
+            }
         }
     }
 }
