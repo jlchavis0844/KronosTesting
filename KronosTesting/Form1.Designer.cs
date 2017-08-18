@@ -42,6 +42,7 @@ namespace KronosTesting
             this.lbllName = new System.Windows.Forms.Label();
             this.tblName = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.tbTags = new System.Windows.Forms.TextBox();
             this.button2 = new System.Windows.Forms.Button();
             this.lblRecordCount = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
@@ -158,6 +159,7 @@ namespace KronosTesting
             // panel1
             // 
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panel1.Controls.Add(this.tbTags);
             this.panel1.Controls.Add(this.button2);
             this.panel1.Controls.Add(this.lblRecordCount);
             this.panel1.Controls.Add(this.button1);
@@ -168,20 +170,31 @@ namespace KronosTesting
             this.panel1.Size = new System.Drawing.Size(1269, 30);
             this.panel1.TabIndex = 12;
             // 
+            // tbTags
+            // 
+            this.tbTags.Location = new System.Drawing.Point(469, 5);
+            this.tbTags.Name = "tbTags";
+            this.tbTags.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.tbTags.Size = new System.Drawing.Size(294, 20);
+            this.tbTags.TabIndex = 16;
+            this.tbTags.Text = "TDS 125 Open Enrollment";
+            // 
             // button2
             // 
-            this.button2.Location = new System.Drawing.Point(143, 3);
+            this.button2.Location = new System.Drawing.Point(276, 4);
             this.button2.Name = "button2";
-            this.button2.Size = new System.Drawing.Size(146, 23);
+            this.button2.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.button2.Size = new System.Drawing.Size(187, 23);
             this.button2.TabIndex = 15;
-            this.button2.Text = "Create a Base Lead";
+            this.button2.Text = "Create a Base Lead With Tag :";
+            this.button2.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // lblRecordCount
             // 
             this.lblRecordCount.AutoSize = true;
-            this.lblRecordCount.Location = new System.Drawing.Point(298, 8);
+            this.lblRecordCount.Location = new System.Drawing.Point(1, 9);
             this.lblRecordCount.Name = "lblRecordCount";
             this.lblRecordCount.Size = new System.Drawing.Size(90, 13);
             this.lblRecordCount.TabIndex = 13;
@@ -189,7 +202,7 @@ namespace KronosTesting
             // 
             // button1
             // 
-            this.button1.Location = new System.Drawing.Point(1, 2);
+            this.button1.Location = new System.Drawing.Point(142, 3);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(118, 25);
             this.button1.TabIndex = 14;
@@ -213,6 +226,7 @@ namespace KronosTesting
             this.dgData.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
             this.dgData.Size = new System.Drawing.Size(1269, 710);
             this.dgData.TabIndex = 1;
+            this.dgData.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dgData_CellContentClick);
             // 
             // panel2
             // 
@@ -318,6 +332,7 @@ namespace KronosTesting
         private System.Windows.Forms.Button button2;
         private System.Windows.Forms.TextBox tbLast4;
         private System.Windows.Forms.Label lblLast4;
+        private System.Windows.Forms.TextBox tbTags;
     }
 }
 

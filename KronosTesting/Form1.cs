@@ -32,6 +32,7 @@ namespace KronosTesting
         {
             InitializeComponent();
             StartUp();//builds the SQL connection, etc
+            MakeLinkCells();
             WindowState = FormWindowState.Maximized;
             Console.WriteLine(userName);
         }
@@ -94,11 +95,13 @@ namespace KronosTesting
             SqlDataAdapter adapter = new SqlDataAdapter(cmd);
             adapter.Fill(dtCustomers);
             dgData.DataSource = dtCustomers;
+            
+            dgData.Refresh();
 
             lblRecordCount.Text = "Record Count: " + ((DataTable)dgData.DataSource).DefaultView.Count;
             dgData.Refresh();
 
-            cmd = new SqlCommand("SELECT Company FROM [Kronos].[dbo].[All_Employees] GROUP BY Company", conn);
+            cmd = new SqlCommand("SELECT Company FROM [Kronos].[dbo].[All_Employees] GROUP BY Company ORDER BY Company ASC", conn);
             cmd.CommandType = System.Data.CommandType.Text;
             SqlDataReader reader = cmd.ExecuteReader();
             cbSchools.Items.Clear();
@@ -112,6 +115,7 @@ namespace KronosTesting
             cbSchools.SelectedIndex = 0;
             conn.Close();
             ((DataTable)dgData.DataSource).DefaultView.RowFilter = null;
+            
             lblRecordCount.Text = "Record Count: " + ((DataTable)dgData.DataSource).DefaultView.Count;
             //hide the ID column
             dgData.Columns[0].Visible = false;
@@ -193,6 +197,7 @@ namespace KronosTesting
             bool updated = WriteLink(URL, userID);
             if (updated) {
                 selectedRow.Cells[13].Value = URL;
+                MakeLinkCells();
             }
 
             Console.WriteLine(jo);
@@ -235,9 +240,9 @@ namespace KronosTesting
             ResetData();
         }
 
-        public static string BuildJson(DataGridViewRow row) {
+        public string BuildJson(DataGridViewRow row) {
             string[] arr = new string[1];
-            arr[0] = "2017OE";
+            arr[0] = tbTags.Text;
 
             JObject custSub = new JObject(
                 new JProperty("Worksite Email", row.Cells[4].Value),
@@ -262,14 +267,57 @@ namespace KronosTesting
             return json.ToString();
         }
 
+        private void MakeLinkCells() {
+            foreach(DataGridViewRow row in dgData.Rows) {
+                if (!(row.Cells[13] is DataGridViewLinkCell)) {
+                    DataGridViewLinkCell linkCell = new DataGridViewLinkCell();
+                    linkCell.Value = row.Cells[13].Value.ToString();
+                    row.Cells[13] = linkCell;
+                }
+                //if(!(row.Cells[13] is DataGridViewLinkCell) && row.Cells[13].Value.ToString() != "" && row.Cells[13].Value != null){
+                //    DataGridViewLinkCell linkCell = new DataGridViewLinkCell();
+                //    linkCell.Value = row.Cells[13].Value;
+                //    row.Cells[13] = linkCell;
+                //} else if(!(row.Cells[13] is DataGridViewLinkCell)) {
+                //    row.Cells[13] = new DataGridViewLinkCell();
+                //}
+            }
+            dgData.Update();
+            dgData.Refresh();
+        }
+
+        private DataGridViewLinkCell MakeLinkCell(string link) {
+            DataGridViewLinkCell linkCell = null;
+            if (link != "" && link != null) {
+                linkCell = new DataGridViewLinkCell();
+                linkCell.Value = link;
+            }
+            return linkCell;
+        }
+
         private static string ReadToken() {
             try {
                 System.IO.StreamReader tFile = new System.IO.StreamReader("\\\\nas3\\Shared\\RALIM\\James\\token.tkn");
                 return tFile.ReadToEnd();
             } catch (Exception e) {
-                MessageBox.Show("Could not find Base Token\nUnable to push lead\nContact Admin");
+                MessageBox.Show("Could not find Base Token\nUnable to push lead\nContact Admin\n" + e);
                 return "";
             }
+        }
+
+        private void dgData_CellContentClick(object sender, DataGridViewCellEventArgs e) {
+            if(dgData.CurrentCell is DataGridViewLinkCell) {
+                System.Diagnostics.Process.Start(dgData.CurrentCell.Value.ToString());
+            } else if (e.ColumnIndex == 13 && dgData.CurrentCell.Value != null && dgData.CurrentCell.Value.ToString() != "") {
+                DataGridViewLinkCell cell = new DataGridViewLinkCell();
+                cell.Value = dgData.CurrentCell.Value.ToString();
+                dgData.Rows[e.RowIndex].Cells[13] = cell;
+                System.Diagnostics.Process.Start(dgData.CurrentCell.Value.ToString());
+            }
+        }
+
+        private void dgData_CellClick(object sender, DataGridViewCellEventArgs e) {
+
         }
     }
 }
