@@ -17,8 +17,6 @@ namespace KronosTesting
         private static DataTable dtCustomers = null;
         private static SqlConnection conn = null;
         private static string token = ReadToken();
-
-        //some fields may be hidden later
         private string sqlBase = "SELECT [ID], [First Name], [Last Name], Email, [Secondary Email], [Work Phone],[Cell Phone], " +
             "[Home Phone], [Company: Phone], Company, LEFT(CONVERT(VARCHAR, [DOB], 120), 10) AS BirthDay, " + 
             "CONVERT(int,ROUND(DATEDIFF(hour,[DOB],GETDATE())/8766.0,0)) AS Age ,'$' + CONVERT(varchar(12), salary, 1) as Salary, " + 
@@ -37,7 +35,7 @@ namespace KronosTesting
         {
             InitializeComponent();
             StartUp();//builds the SQL connection, etc
-            //MakeLinkCells();
+            MakeLinkCells();
             WindowState = FormWindowState.Maximized;
             Console.WriteLine(userName);
         }
@@ -87,7 +85,8 @@ namespace KronosTesting
         /// <summary>
         /// Builds SQL connection, loads data to DataGridView, 
         /// </summary>
-        private void StartUp() {
+        private void StartUp()
+        {
             dgData.AutoSize = true;
             dgData.Dock = DockStyle.Fill;
             dtCustomers = new DataTable();
@@ -98,9 +97,8 @@ namespace KronosTesting
             conn.Open();
             SqlDataAdapter adapter = new SqlDataAdapter(cmd);
             adapter.Fill(dtCustomers);
-
             dgData.DataSource = dtCustomers;
-
+            
             dgData.Refresh();
 
             lblRecordCount.Text = "Record Count: " + ((DataTable)dgData.DataSource).DefaultView.Count;
@@ -111,7 +109,8 @@ namespace KronosTesting
             SqlDataReader reader = cmd.ExecuteReader();
             cbSchools.Items.Clear();
             cbSchools.Items.Add("All");
-            while (reader.Read()) {
+            while (reader.Read())
+            {
                 cbSchools.Items.Add(reader.GetString(0));
             }
             conn.Close();
@@ -121,20 +120,16 @@ namespace KronosTesting
 
             GetAgentNames();
             cbAgents.Items.Insert(0, "Change Default Agent");
-            foreach (string name in agentNames) {
+            foreach(string name in agentNames) {
                 cbAgents.Items.Add(name);
             }
             cbAgents.SelectedIndex = 0;
 
             ((DataTable)dgData.DataSource).DefaultView.RowFilter = null;
-
+            
             lblRecordCount.Text = "Record Count: " + ((DataTable)dgData.DataSource).DefaultView.Count;
             //hide the ID column
-            dgData.Columns[0].Visible = false; //ID
-            dgData.Columns[10].Visible = false;
-            dgData.Columns[11].Visible = false;
-            dgData.Columns[12].Visible = false;
-            dgData.Columns[14].Visible = false;
+            dgData.Columns[0].Visible = false;
         }
 
         private void btnName_Click(object sender, EventArgs e)
@@ -180,13 +175,7 @@ namespace KronosTesting
             StartUp();
         }
 
-        /// <summary>
-        /// Creates a base lead using basic contact info from Kronos. Placing them in Base<BR>
-        /// Leave as sync (not async0 for API verification and error checking reasons.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        private async void btnMakeLead_Click(object sender, EventArgs e)
+        private async void button2_Click(object sender, EventArgs e)
         {
             DataGridViewRow selectedRow = null;
             if(dgData.SelectedRows.Count == 0) {
@@ -212,15 +201,14 @@ namespace KronosTesting
             string leadID = jo["data"]["id"].ToString();
             string URL = "https://app.futuresimple.com/leads/" + leadID;
 
-            if(MessageBox.Show("Would you like to open the lead in base?",
-                "Open in Base?", MessageBoxButtons.YesNo) == DialogResult.Yes){
-                    System.Diagnostics.Process.Start(URL);
-                }
+            if(MessageBox.Show("Would you like to open the lead in base?","Open in Base?", MessageBoxButtons.YesNo) == DialogResult.Yes){
+                System.Diagnostics.Process.Start(URL);
+            }
 
             bool updated = WriteLink(URL, userID);
             if (updated) {
                 selectedRow.Cells[13].Value = URL;
-                //MakeLinkCells();
+                MakeLinkCells();
             }
 
             Console.WriteLine(jo);
@@ -278,9 +266,9 @@ namespace KronosTesting
                 new JProperty("Worksite Phone", row.Cells[5].Value),
                 new JProperty("Home Phone", row.Cells[7].Value),
                 new JProperty("District Phone", row.Cells[8].Value),
-                new JProperty("District", row.Cells[9].Value)
-                //new JProperty("DOB", row.Cells[10].Value),
-                //new JProperty("Annual Salary", row.Cells[12].Value)
+                new JProperty("District", row.Cells[9].Value),
+                new JProperty("DOB", row.Cells[10].Value),
+                new JProperty("Annual Salary", row.Cells[12].Value)
                 );
             JObject data = new JObject(
                         new JProperty("owner_id", idNum),
@@ -311,8 +299,18 @@ namespace KronosTesting
                 //    row.Cells[13] = new DataGridViewLinkCell();
                 //}
             }
+            dgData.Update();
+            dgData.Refresh();
         }
 
+        private DataGridViewLinkCell MakeLinkCell(string link) {
+            DataGridViewLinkCell linkCell = null;
+            if (link != "" && link != null) {
+                linkCell = new DataGridViewLinkCell();
+                linkCell.Value = link;
+            }
+            return linkCell;
+        }
 
         private static string ReadToken() {
             try {
@@ -325,10 +323,14 @@ namespace KronosTesting
         }
 
         private void dgData_CellContentClick(object sender, DataGridViewCellEventArgs e) {
-            if (e.ColumnIndex == 13 && dgData.CurrentCell.Value != null && dgData.CurrentCell.Value.ToString() != "") {
+            if(dgData.CurrentCell is DataGridViewLinkCell) {
                 System.Diagnostics.Process.Start(dgData.CurrentCell.Value.ToString());
-            }
-            else if (dgData.CurrentCell.Value != null && dgData.CurrentCell.Value.ToString() != "") {
+            } else if (e.ColumnIndex == 13 && dgData.CurrentCell.Value != null && dgData.CurrentCell.Value.ToString() != "") {
+                DataGridViewLinkCell cell = new DataGridViewLinkCell();
+                cell.Value = dgData.CurrentCell.Value.ToString();
+                dgData.Rows[e.RowIndex].Cells[13] = cell;
+                System.Diagnostics.Process.Start(dgData.CurrentCell.Value.ToString());
+            } else if (dgData.CurrentCell.Value != null  && dgData.CurrentCell.Value.ToString() != "") {
                 Clipboard.SetText(dgData.CurrentCell.Value.ToString());
             }
         }
