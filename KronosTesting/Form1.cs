@@ -87,8 +87,7 @@ namespace KronosTesting
         /// <summary>
         /// Builds SQL connection, loads data to DataGridView, 
         /// </summary>
-        private void StartUp()
-        {
+        private void StartUp() {
             dgData.AutoSize = true;
             dgData.Dock = DockStyle.Fill;
             dtCustomers = new DataTable();
@@ -101,7 +100,7 @@ namespace KronosTesting
             adapter.Fill(dtCustomers);
 
             dgData.DataSource = dtCustomers;
-            
+
             dgData.Refresh();
 
             lblRecordCount.Text = "Record Count: " + ((DataTable)dgData.DataSource).DefaultView.Count;
@@ -112,8 +111,7 @@ namespace KronosTesting
             SqlDataReader reader = cmd.ExecuteReader();
             cbSchools.Items.Clear();
             cbSchools.Items.Add("All");
-            while (reader.Read())
-            {
+            while (reader.Read()) {
                 cbSchools.Items.Add(reader.GetString(0));
             }
             conn.Close();
@@ -123,21 +121,20 @@ namespace KronosTesting
 
             GetAgentNames();
             cbAgents.Items.Insert(0, "Change Default Agent");
-            foreach(string name in agentNames) {
+            foreach (string name in agentNames) {
                 cbAgents.Items.Add(name);
             }
             cbAgents.SelectedIndex = 0;
 
             ((DataTable)dgData.DataSource).DefaultView.RowFilter = null;
-            
+
             lblRecordCount.Text = "Record Count: " + ((DataTable)dgData.DataSource).DefaultView.Count;
             //hide the ID column
             dgData.Columns[0].Visible = false; //ID
-            dgData.Columns[10].Visible = false; 
+            dgData.Columns[10].Visible = false;
             dgData.Columns[11].Visible = false;
             dgData.Columns[12].Visible = false;
             dgData.Columns[14].Visible = false;
-
         }
 
         private void btnName_Click(object sender, EventArgs e)

@@ -267,7 +267,7 @@ namespace KronosTesting
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(4, 4);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(1073, 13);
+            this.label2.Size = new System.Drawing.Size(1070, 13);
             this.label2.TabIndex = 14;
             this.label2.Text = resources.GetString("label2.Text");
             // 

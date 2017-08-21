@@ -33,5 +33,15 @@ namespace KronosTesting.Properties {
                 return ((string)(this["OpenEnrollmentRostersConnectionString"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.SpecialSettingAttribute(global::System.Configuration.SpecialSetting.ConnectionString)]
+        [global::System.Configuration.DefaultSettingValueAttribute("Data Source=RALIMSQL1\\RALIM1;Initial Catalog=Kronos;Integrated Security=True")]
+        public string KronosConnectionString {
+            get {
+                return ((string)(this["KronosConnectionString"]));
+            }
+        }
     }
 }
